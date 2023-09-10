@@ -11,15 +11,15 @@ import time
 import os
 import sys
 options = uc.ChromeOptions()
-options.add_argument('--headless=new')
+#options.add_argument('--headless=new')
 options.add_argument("--ignore-certificate-errors")
 options.add_argument("--window-size=1920,1080")
 os.system('clear')
 print('You can press ctrl+c at any time to exit the script')
 try:
     file_name = input('Enter HTML file name: ')
-    username = input('Enter your gmail username: ') 
-    password = input('Enter your gmail password: ') 
+    username = '' 
+    password = '' 
     number_of_random_posts = input('Enter number of posts you want: ')
     while number_of_random_posts.isnumeric() != True or int(number_of_random_posts)<=0:
         number_of_random_posts = input('Please enter a positive whole number: ')
@@ -111,8 +111,8 @@ def getData():
                         all_links.append(link)
                         if len(links) == 50:
                             break
-                except (StaleElementReferenceException ,WebDriverException) :
-                    1
+                except:
+                    pass
                 
             driver.execute_script('window.scrollBy({top:window.innerHeight,left:0,behavior:"smooth"})')
             i+=1
@@ -136,13 +136,13 @@ def getData():
                 for pla in possible_likes_amounts:
                     try:
                         text = pla.text
-                    except StaleElementReferenceException:
+                    except:
                         possible_likes_amounts = driver.find_elements(By.CSS_SELECTOR,('div[class="tBJ dyH iFc sAJ O2T zDA IZT H2s"]'))
                         if possible_likes_amounts:
                             for pla in possible_likes_amounts:
                                 try:
                                     text = pla.text
-                                except StaleElementReferenceException:
+                                except:
                                     text = '0'
                         else:
                             text = '0'                               
@@ -160,7 +160,10 @@ def getData():
                 likes_amount = 0                
                   
             if int(likes_amount) > minimum_number_of_likes:
-                image = driver.find_elements(By.CSS_SELECTOR,('img'))[1].get_attribute('src')
+                try:
+                    image = driver.find_elements(By.CSS_SELECTOR,('div[data-test-id="visual-content-container"] img[class="hCL kVc L4E MIw"]'))[0].get_attribute('src')
+                except:
+                    image=''    
                 video = driver.find_elements(By.CSS_SELECTOR,('div[aria-label="Pause or play video"]'))
                 if video:
                     image = ''
